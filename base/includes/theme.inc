@@ -24,7 +24,15 @@ function base_theme_suggestions_block_alter(array &$suggestions, array $variable
   }
 }
 
+/**
+ * Implements hook_theme_suggestions_block_alter().
+ */
+ //Adding the media url to the variables
+function base_preprocess_media(&$variables) {
+  $variables['url'] = $variables['media']->toUrl();
+}
 
+ //Adding the users url to the variables
 function base_preprocess_user(&$variables) {
   $variables['user_link'] = $variables['user']->toUrl();
 }

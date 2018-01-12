@@ -16,7 +16,15 @@
  * @see template_preprocess_user()
  */
 #}
-<article{{ attributes }}>
+
+{%
+  set classes = [
+    'user',
+    'user--display-mode--default'
+  ]
+%}
+
+<article {{ attributes.addclass(classes) }}>
   {% if content %}
     {{- content -}}
   {% endif %}

@@ -23,3 +23,22 @@ function base_theme_suggestions_block_alter(array &$suggestions, array $variable
     // Get bundle/block type.
   }
 }
+
+
+function base_preprocess_user(&$variables) {
+  $variables['user_link'] = $variables['user']->toUrl();
+}
+
+
+/**
+ * Implements hook_theme_suggestions_user_alter().
+ *
+ */
+function base_theme_suggestions_user_alter(&$suggestions, $vars, $hook) {
+
+  // Define the view mode.
+  $mode = $vars['elements']['#view_mode'];
+
+  // Create a theme hook suggestion which has the view mode name in it.
+  $suggestions[] = 'user__' . $mode;
+}

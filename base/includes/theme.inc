@@ -9,7 +9,7 @@
  * @param $variables
  */
 function base_theme_suggestions_taxonomy_term_alter(array &$suggestions, array $variables) {
-  $suggestions[] = 'taxonomy_term__' . $variables['elements']['#view_mode'];
+  $suggestions[] = 'taxonomy_term__' .$variables['elements']['name']['#bundle'] . '__' . $variables['elements']['#view_mode'];
 }
 
 

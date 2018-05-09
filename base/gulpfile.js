@@ -7,7 +7,8 @@ var browserSync = require('browser-sync').create();
 var cache = require('gulp-cache');
 var sourcemaps = require('gulp-sourcemaps');
 var plumber = require('gulp-plumber');
-var gutil = require('gulp-util');
+var log = require('fancy-log');
+var colors = require('ansi-colors');
 var notify = require('gulp-notify');
 
 
@@ -19,7 +20,7 @@ gulp.task('serve', function() {
     // browser:     "google chrome"
   });
 
-  gulp.watch("sass/**/*.scss", ['sass']);
+  gulp.watch("sass/**/*.scss", gulp.series(['sass']));
   gulp.watch("templates/**/*.twig").on('change', browserSync.reload);
   gulp.watch('js/*.js').on('change', browserSync.reload);
 });
@@ -27,7 +28,7 @@ gulp.task('serve', function() {
 gulp.task('sass', function() {
   return gulp.src("sass/**/*.scss")
     .pipe(plumber(function(error) {
-      gutil.log(gutil.colors.red('Error (' + error.plugin + '): ' + error.message));
+      log.error(colors.red.bold('Error (' + error.plugin + '): ' + error.message));
       this.emit('end');
     }))
     .pipe(plumber({errorHandler: notify.onError("Error : <%= error.message %>")}))
@@ -54,4 +55,4 @@ gulp.task('sass', function() {
     }));
 });
 
-gulp.task('default', ['sass', 'serve']);
+gulp.task('default', gulp.series(['sass', 'serve']));

@@ -1,4 +1,6 @@
-var domain = 'http://x.dd:8083'; // Set this to your local development domain.
+// Set domain to your local development domain or 'auto' to use BrowserSync.
+// Set domain to null to disable BrowserSync.
+var domain = 'auto'; 
 
 var gulp = require('gulp');
 var sass = require('gulp-sass');
@@ -11,22 +13,35 @@ var log = require('fancy-log');
 var colors = require('ansi-colors');
 var notify = require('gulp-notify');
 
-
+if (domain == 'auto') {
+  // Attempt to automatically get the domain name from Dev Desktop's config files.
+  domain = require('gulp-getdevdesktopdomain');
+  if (domain == null) {
+    log.error(colors.red.bold('Error: Could not set BrowserSync domain name automatically.'));
+    log.error(colors.red.bold('Manually set a domain name in gulpfile.js to use BrowserSync.'));
+  } else {
+    log.info('Found Dev Desktop domain: ' + colors.magenta(domain));
+  }
+}
 
 gulp.task('serve', function() {
 
-  browserSync.init({
-    proxy: domain
-    // browser:     "google chrome"
-  });
-
   gulp.watch("sass/**/*.scss", gulp.series(['sass']));
-  gulp.watch("templates/**/*.twig").on('change', browserSync.reload);
-  gulp.watch('js/*.js').on('change', browserSync.reload);
+
+  // Skip BrowserSync init if no domain is provided.
+  if (domain) {
+    browserSync.init({
+      proxy: domain
+      // browser:     "google chrome"
+    });
+
+    gulp.watch("templates/**/*.twig").on('change', browserSync.reload);
+    gulp.watch('js/*.js').on('change', browserSync.reload);
+  }
 });
 
 gulp.task('sass', function() {
-  return gulp.src("sass/**/*.scss")
+  stream = gulp.src("sass/**/*.scss")
     .pipe(plumber(function(error) {
       log.error(colors.red.bold('Error (' + error.plugin + '): ' + error.message));
       this.emit('end');
@@ -49,10 +64,18 @@ gulp.task('sass', function() {
       'android >= 4.2'
     ]))
     .pipe(sourcemaps.write())
-    .pipe(gulp.dest("css"))
-    .pipe(browserSync.stream({
-      stream: true
-    }));
+    .pipe(gulp.dest("css"));
+
+  // Only add BrowserSync to the stream if a domain name is provided.
+  if (domain) {
+    stream = stream.pipe(
+      browserSync.stream({
+        stream: true
+      })
+    );
+  }
+
+  return stream;
 });
 
 gulp.task('default', gulp.series(['sass', 'serve']));

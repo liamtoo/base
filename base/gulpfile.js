@@ -4,6 +4,7 @@ var domain = 'auto';
 
 var gulp = require('gulp');
 var sass = require('gulp-sass');
+var sassLint = require('gulp-sass-lint');
 var autoprefixer = require('gulp-autoprefixer');
 var browserSync = require('browser-sync').create();
 var cache = require('gulp-cache');
@@ -52,6 +53,11 @@ gulp.task('sass', function() {
     .pipe(sass({
       outputStyle: 'expanded'
     }))
+    .pipe(sassLint({
+      configFile: '.sass-lint.yml'
+     }))
+    .pipe(sassLint.format())
+    .pipe(sassLint.failOnError())
     .pipe(sass().on('error', sass.logError))
     .pipe(autoprefixer([
       'ie >= 10',

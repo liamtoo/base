@@ -4,6 +4,10 @@
   "sasslintConfig": ".sass-lint.yml",
   "description": "Base Drupal 8 theme",
   "main": "gulpfile.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/OPIN-CA/base.git"
+  },
   "dependencies": {
     "adaptive-placeholders": "~1.1.5",
     "breakpoint-sass": "~2.7.1",
